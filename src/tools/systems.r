@@ -35,6 +35,7 @@ systems: [
 	[0.5.75 "haiku"      posix  [+O2 ST1 NWK]]
 	[0.7.02 "freebsd"    posix  [+O1 C++ ST1 -LM]]
 	[0.9.04 "openbsd"    posix  [+O1 C++ ST1 -LM]]
+	[0.9.40 "openbsd_x64"    posix  [+O1 C++ ST1 -LM]]
 	[0.13.01 "android_arm"  android  [HID F64 LDL LLOG -LM CST]]
 ]
 
