@@ -200,6 +200,14 @@ These are now obsolete (as of A107) and should be removed:
 #define HAS_LL_CONSTS
 #endif
 
+#ifdef TO_OPENBSD_X64				// Open/AMD64
+#define TO_OPENBSD
+#define TO_OBSD
+#ifndef __LP64__
+#define __LP64__
+#endif
+#endif
+
 #ifdef TO_OPENBSD
 #define ENDIAN_LITTLE
 #define HAS_LL_CONSTS
@@ -208,6 +216,8 @@ These are now obsolete (as of A107) and should be removed:
 #ifdef TO_OBSD					// OpenBSD
 #define COPY_STR(d,s,m) strlcpy(d,s,m)
 #define JOIN_STR(d,s,m) strlcat(d,s,m)
+#define HAS_SETENV
+#define HAS_UNSETENV
 #endif
 
 #ifdef TO_AMIGA					// Target for OS4

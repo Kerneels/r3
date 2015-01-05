@@ -278,8 +278,15 @@ typedef void(*CFUNC)(void *);
 #ifdef OS_WIDE_CHAR
 #define OS_WIDE TRUE
 #define TXT(s) (L##s)
+
+#ifndef COPY_STR
 #define COPY_STR(t,f,l) wcsncpy(t, f, l)
+#endif
+
+#ifndef JOIN_STR
 #define JOIN_STR(d,s,l) wcsncat(d,s,l)
+#endif
+
 #define FIND_STR(d,s)   wcsstr(d,s)
 #define FIND_CHR(d,s)   wcschr(d,s)
 #define LEN_STR(s)      wcslen(s)
@@ -289,8 +296,15 @@ typedef void(*CFUNC)(void *);
 // OS has UTF-8 byte string interfaces:
 #define OS_WIDE FALSE
 #define TXT(s) (s)
+
+#ifndef COPY_STR
 #define COPY_STR(t,f,l) strncpy(t, f, l)
+#endif
+
+#ifndef JOIN_STR
 #define JOIN_STR(d,s,l) strncat(d,s,l)
+#endif
+
 #define FIND_STR(d,s)   strstr(d,s)
 #define FIND_CHR(d,s)   strchr(d,s)
 #define LEN_STR(s)      strlen(s)

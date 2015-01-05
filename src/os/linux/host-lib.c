@@ -58,6 +58,7 @@
 #include <time.h>
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
 
 #ifndef timeval // for older systems
 #include <sys/time.h>
@@ -70,7 +71,9 @@
 #include <dlfcn.h>
 #endif
 
+#ifdef __GLIBC__
 #include <elf.h>
+#endif
 
 #ifndef REB_CORE
 REBSER* Gob_To_Image(REBGOB *gob);
@@ -576,7 +579,7 @@ error:
 ***********************************************************************/
 {
 	if (envval) {
-#ifdef setenv
+#ifdef HAS_SETENV
 		// we pass 1 for overwrite (make call to OS_Get_Env if you
 		// want to check if already exists)
 
@@ -611,7 +614,7 @@ error:
 		return TRUE;
 	}
 
-#ifdef unsetenv
+#ifdef HAS_UNSETENV
 	if (unsetenv(envname) == -1)
 		return FALSE;
 #else
@@ -1029,6 +1032,9 @@ static int Try_Browser(char *browser, REBCHR *url)
 /*
 ***********************************************************************/
 {
+#ifndef TO_LINUX
+	return NULL;
+#else
 #ifdef __LP64__
 	Elf64_Ehdr file_header;
 	Elf64_Shdr *sec_headers;
@@ -1130,4 +1136,5 @@ header_failed:
 	OS_Free(sec_headers);
 	fclose(script);
 	return ret;
+#endif //TO_LINUX
 }
