@@ -751,11 +751,13 @@ RL_API REBYTE *RL_Word_String(u32 word)
 */
 {
 	REBYTE *s1, *s2;
+	REBINT len = 0;
 	// !!This code should use a function from c-words.c (but nothing perfect yet.)
 	if (word == 0 || word >= PG_Word_Table.series->tail) return 0;
 	s1 = VAL_SYM_NAME(BLK_SKIP(PG_Word_Table.series, word));
-	s2 = OS_MAKE(strlen(s1));
-	strcpy(s2, s1);
+	len = strlen(s1) + 1;
+	s2 = OS_MAKE(len);
+	COPY_STR(s2, s1, len);
 	return s2;
 }
 
