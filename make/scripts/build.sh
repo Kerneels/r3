@@ -18,12 +18,22 @@ setup() {
 			NAME="r3-32-view-linux-$timestamp-$(revision)"
 			RELNAME="r3-32-view-linux"
 			CFLAGS="-m32"
+			LDFLAGS="-lm"
+			;;
+		openbsd-32)
+			MK="makefile-openbsd-32"
+			EXE="r3-view-linux"
+			NAME="r3-32-view-openbsd-x86-$timestamp-$(revision)"
+			RELNAME="r3-32-view-openbsd-x86"
+			RCFLAGS="-I/usr/X11R6/include -O2"
+			RLDFLAGS="-lpthread"
 			;;
 		linux-64)
 			MK="makefile-64"
 			EXE="r3-view-linux"
 			NAME="r3-64-view-linux-$timestamp-$(revision)"
 			RELNAME="r3-64-view-linux"
+			RLDFLAGS="-lm"
 			;;
 		win-32)
 			MK="makefile-mingw-32"
@@ -31,6 +41,7 @@ setup() {
 			NAME="r3-32-view-$timestamp-$(revision).exe"
 			RELNAME="r3-32-view.exe"
 			HOST="i686-w64-mingw32"
+			RLDFLAGS=""
 			;;
 		win-64)
 			MK="makefile-mingw-64"
@@ -38,12 +49,14 @@ setup() {
 			NAME="r3-64-view-$timestamp-$(revision).exe"
 			HOST="x86_64-w64-mingw32"
 			RELNAME="r3-64-view.exe"
+			RLDFLAGS=""
 			;;
 		armv7)
 			EXE="r3-view-linux"
 			MK="makefile-armv7"
 			NAME="r3-armv7-view-$timestamp-$(revision)"
 			RELNAME="r3-armv7hf-view-linux"
+			RLDFLAGS="-lm"
 			;;
 		*)
 			echo "unsupported platform $1"
@@ -81,7 +94,15 @@ build() {
 	make install
 	cd $DIR
 	make -f $MK clean
-	make -f $MK $EXE
+	flags=""
+	if [ ! -z $RCFLAGS ]; then
+		flags="CFLAGS=$RCFLAGS"
+	fi
+	if [ ! -z $RLDFLAGS ]; then
+		flags="$flags LDFLAGS=$RLDFLAGS"
+	fi
+
+	make -f $MK $flags $EXE
 	#make -f $MK strip-view
 	cp $EXE $NAME
 }
