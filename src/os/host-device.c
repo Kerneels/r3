@@ -74,6 +74,9 @@ extern REBDEV Dev_DNS;
 extern REBDEV Dev_Clipboard;
 #endif
 extern REBDEV Dev_Serial;
+#ifdef HAS_POSIX_SIGNAL
+extern REBDEV Dev_Signal;
+#endif
 
 REBDEV *Devices[RDI_LIMIT] =
 {
@@ -90,6 +93,9 @@ REBDEV *Devices[RDI_LIMIT] =
 	0,
 #endif
 	&Dev_Serial,
+#ifdef HAS_POSIX_SIGNAL
+	&Dev_Signal,
+#endif
 	0,
 };
 
@@ -479,6 +485,8 @@ static int Poll_Default(REBDEV *dev)
 	// Setup for timing:
 	CLEARS(&req);
 	req.device = RDI_EVENT;
+
+	OS_Reap_Process(-1, NULL, 0);
 
 	// Let any pending device I/O have a chance to run:
 	if (OS_Poll_Devices()) return -1;

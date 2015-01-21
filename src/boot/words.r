@@ -165,6 +165,7 @@ tcp
 udp
 clipboard
 serial
+signal
 
 ; Serial parameters
 ; Parity
@@ -189,6 +190,7 @@ pointer
 addr
 raw-memory
 raw-size
+rebval
 
 ;routine
 void
@@ -247,6 +249,37 @@ fullscreen
 
 *port-modes*
 
+; posix signal names
+all
+sigalrm
+sigabrt
+sigbus
+sigchld
+sigcont
+sigfpe
+sighup
+sigill
+sigint
+sigkill
+sigpipe
+sigquit
+sigsegv
+sigstop
+sigterm
+sigtstp
+sigttin
+sigttou
+sigusr1
+sigusr2
+sigpoll
+sigprof
+sigsys
+sigtrap
+sigurg
+sigvtalrm
+sigxcpu
+sigxfsz
+
 bits
 crash
 crash-dump
@@ -259,3 +292,7 @@ euid
 gid
 egid
 pid
+
+;call/info
+id
+exit-code
