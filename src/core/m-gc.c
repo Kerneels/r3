@@ -301,6 +301,21 @@ static void Mark_Value(REBVAL *val, REBCNT depth);
 
 /***********************************************************************
 **
+*/ static void Mark_Auxiliary(REBCNT depth)
+/*
+**  Mark all auxiliary memory.
+**
+***********************************************************************/
+{
+	REBINT i = 0;
+	for(i = 0; i < SERIES_TAIL(AS_Series); i ++) {
+		REBGCM *m = *(REBGCM**) SERIES_SKIP(AS_Series, i);
+		MARK_GCM(m);
+	}
+}
+
+/***********************************************************************
+**
 */	static void Mark_Value(REBVAL *val, REBCNT depth)
 /*
 ***********************************************************************/
@@ -649,6 +664,41 @@ mark_obj:
 
 /***********************************************************************
 **
+*/	static REBCNT Sweep_Auxiliary(void)
+/*
+**		Free all unmarked GCMs.
+**
+**		Scans all GCMs in all segments that are part of the
+**		GCM_POOL. Free libs that have not been marked.
+**
+***********************************************************************/
+{
+	REBSEG	*seg;
+	REBGCM	*gcm;
+	REBCNT  n;
+	REBCNT	count = 0;
+
+	for (seg = Mem_Pools[GCM_POOL].segs; seg; seg = seg->next) {
+		gcm = (REBGCM *) (seg + 1);
+		for (n = Mem_Pools[GCM_POOL].units; n > 0; n--) {
+			SKIP_WALL(gcm);
+			if (IS_USED_GCM(gcm)) {
+				if(IS_MARKED_GCM(gcm)) {
+					UNMARK_GCM(gcm);
+				} else {
+					Free_Gcm(gcm);
+					count++;
+				}
+			}
+			gcm ++;
+		}
+	}
+
+	return count;
+}
+
+/***********************************************************************
+**
 */	static REBCNT Sweep_Routines(void)
 /*
 **		Free all unmarked routines.
@@ -751,12 +801,14 @@ mark_obj:
 
 	// Mark all devices:
 	Mark_Devices(0);
+	Mark_Auxiliary(0);
 	
 	count = Sweep_Routines(); // this needs to run before Sweep_Series(), because Routine has series with pointers, which can't be simply discarded by Sweep_Series
 
 	count += Sweep_Series();
 	count += Sweep_Gobs();
 	count += Sweep_Libs();
+	count += Sweep_Auxiliary();
 
 	CHECK_MEMORY(4);
 
